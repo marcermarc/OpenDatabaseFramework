@@ -1,4 +1,5 @@
-﻿Imports System.Collections.Generic
+﻿Imports System
+Imports System.Collections.Generic
 Imports System.Threading
 
 Public Class ThreadUnique(Of T)
