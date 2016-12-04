@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2E609674-04CF-4648-A82A-829EB0D978A6}</ProjectGuid>
+    <ProjectGuid>{58C75A29-D780-4539-90EE-6026EE5BEAC5}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>marcermarc.OpenDatabaseFramework</RootNamespace>
-    <AssemblyName>marcermarc.OpenDatabaseFramework</AssemblyName>
+    <RootNamespace>marcermarc.OpenDatabaseFramework.SqlServer</RootNamespace>
+    <AssemblyName>marcermarc.OpenDatabaseFramework.SqlServer</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
@@ -18,7 +18,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>marcermarc.OpenDatabaseFramework.xml</DocumentationFile>
+    <DocumentationFile>marcermarc.OpenDatabaseFramework.SqlServer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -27,7 +27,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>marcermarc.OpenDatabaseFramework.xml</DocumentationFile>
+    <DocumentationFile>marcermarc.OpenDatabaseFramework.SqlServer.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -45,10 +45,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connection.vb" />
+    <Compile Include="Class1.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -64,7 +63,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Utils\ThreadUnique.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
