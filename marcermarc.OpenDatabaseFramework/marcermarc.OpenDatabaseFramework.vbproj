@@ -48,6 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseObjects\DatabaseObject.vb" />
+    <Compile Include="BaseObjects\DataEntityCollection.vb" />
+    <Compile Include="BaseObjects\DataEntityObject.vb" />
+    <Compile Include="BaseObjects\SQLStatement.vb" />
+    <Compile Include="ConnectionObjects\AccessConnection.vb" />
+    <Compile Include="ConnectionObjects\BaseConnection.vb" />
+    <Compile Include="ConnectionObjects\Connection.vb" />
+    <Compile Include="ConnectionData.vb" />
+    <Compile Include="ConnectionObjects\MySQLConnection.vb" />
+    <Compile Include="ConnectionObjects\OracleConnection.vb" />
+    <Compile Include="ConnectionObjects\SQLiteConnection.vb" />
+    <Compile Include="ConnectionObjects\SQLServerConnection.vb" />
     <Compile Include="Connection.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
