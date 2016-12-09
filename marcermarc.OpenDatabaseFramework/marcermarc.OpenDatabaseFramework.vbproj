@@ -52,14 +52,10 @@
     <Compile Include="BaseObjects\DataEntityCollection.vb" />
     <Compile Include="BaseObjects\DataEntityObject.vb" />
     <Compile Include="BaseObjects\SQLStatement.vb" />
-    <Compile Include="ConnectionObjects\AccessConnection.vb" />
-    <Compile Include="ConnectionObjects\BaseConnection.vb" />
-    <Compile Include="ConnectionObjects\Connection.vb" />
-    <Compile Include="ConnectionData.vb" />
-    <Compile Include="ConnectionObjects\MySQLConnection.vb" />
-    <Compile Include="ConnectionObjects\OracleConnection.vb" />
-    <Compile Include="ConnectionObjects\SQLiteConnection.vb" />
-    <Compile Include="ConnectionObjects\SQLServerConnection.vb" />
+    <Compile Include="Connection\Command.vb" />
+    <Compile Include="Connection\Connection.vb" />
+    <Compile Include="Connection\Transaction.vb" />
+    <Compile Include="DatabaseData\DatabaseObject.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -75,7 +71,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Utils\ThreadUnique.vb" />
+    <Compile Include="DatabaseData\DatabaseObjectList.vb" />
+    <Compile Include="Utils\IUnique\IUnique.vb" />
+    <Compile Include="Utils\IUnique\ThreadUnique.vb" />
+    <Compile Include="Utils\IUnique\Unique.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

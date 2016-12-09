@@ -1,11 +1,11 @@
-﻿Imports System
-Imports System.Data
+﻿'Imports System
+'Imports System.Data
 
-Namespace BaseObjects
-    Public MustInherit Class DataEntityCollection
-        Inherits DatabaseObject
-        Protected datatable As DataTable
+'Namespace BaseObjects
+'    Public MustInherit Class DataEntityCollection
+'        Inherits DatabaseObject
+'        Protected datatable As DataTable
 
 
-    End Class
-End Namespace
+'    End Class
+'End Namespace

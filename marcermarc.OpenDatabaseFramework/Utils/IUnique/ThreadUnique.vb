@@ -2,13 +2,13 @@
 Imports System.Collections.Generic
 Imports System.Threading
 
-Public Class ThreadUnique(Of T)
-    Implements IDisposable
+Friend Class ThreadUnique(Of T)
+    Implements IUnique(Of T), IDisposable
 
     Private m_lock As Object 'Object to synclock
     Private m_values As Dictionary(Of Integer, T)
 
-    Public Property Value As T
+    Public Property Value As T Implements IUnique(Of T).Value
         Get
             SyncLock m_lock
                 If m_values.ContainsKey(Thread.CurrentThread.ManagedThreadId) Then
