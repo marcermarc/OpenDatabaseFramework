@@ -9,34 +9,59 @@ Public Class DatabaseObjectList(Of T As {DatabaseObject, New})
     Implements IList(Of T), ICollection(Of T), IEnumerable(Of T), IList, ICollection, IEnumerable, IDisposable
 
     Private m_Datatable As DataTable
+    Private m_List As List(Of T)
+
+    Sub New(in_Datatable As DataTable)
+        m_Datatable = in_Datatable
+        m_List = New List(Of T)(in_Datatable.Rows.Count)
+    End Sub
+
+    Sub DeleteAt(index As Integer)
+        'ToDo Remove from list, but forward delete to database so remove not from datatable
+        Throw New NotImplementedException
+    End Sub
+
+    Sub Delete(item As T)
+        'ToDo Remove from list, but forward delete to database so remove not from datatable
+        Throw New NotImplementedException
+    End Sub
 
 #Region "IList(Of T)"
-    Private Property Item(index As Integer) As T Implements IList(Of T).Item
+    Default Property Item(index As Integer) As T Implements IList(Of T).Item
         Get
-            Return New T With {.Row = m_Datatable.Rows(index)}
+            If m_List(index) Is Nothing Then
+                m_List(index) = New T With {.Row = m_Datatable.Rows(index)}
+            End If
+
+            Return m_List(index)
         End Get
         Set(value As T)
-            Throw New NotImplementedException()
+            If value.Row.Equals(Item(index).Row) Then
+                Return
+            End If
+            'ToDo Set old index deletet and create a new row
         End Set
     End Property
 
-    Private Sub Insert(index As Integer, item As T) Implements IList(Of T).Insert
+    Sub Insert(index As Integer, item As T) Implements IList(Of T).Insert
         m_Datatable.Rows.InsertAt(item.Row, index)
+        m_List.Insert(index, item)
     End Sub
 
-    Private Sub RemoveAt(index As Integer) Implements IList(Of T).RemoveAt
-        m_Datatable.Rows(index).Delete()
+    Sub RemoveAt(index As Integer) Implements IList(Of T).RemoveAt
+        m_Datatable.Rows.RemoveAt(index)
+        m_List.RemoveAt(index)
     End Sub
 
     Private Function IndexOf(item As T) As Integer Implements IList(Of T).IndexOf
-        Throw New NotImplementedException()
+        Throw New Exceptions.NotSupportedException
     End Function
 #End Region
 
 #Region "ICollection(Of T)"
-    Private ReadOnly Property Count As Integer Implements ICollection(Of T).Count
+    ReadOnly Property Count As Integer Implements ICollection(Of T).Count
         Get
-            Return m_Datatable.Rows.Count ' ToDo Substract Deletete Rows
+            Return m_List.Count
         End Get
     End Property
 
@@ -46,30 +71,42 @@ Public Class DatabaseObjectList(Of T As {DatabaseObject, New})
         End Get
     End Property
 
-    Private Sub Add(item As T) Implements ICollection(Of T).Add
+    Sub Add(item As T) Implements ICollection(Of T).Add
         m_Datatable.Rows.Add(item.Row)
+        m_List.Add(item)
     End Sub
 
     Private Sub Clear() Implements ICollection(Of T).Clear
+        'Private because it is not usefull
         m_Datatable.Rows.Clear()
+        m_List.Clear()
     End Sub
 
     Private Sub CopyTo(array() As T, arrayIndex As Integer) Implements ICollection(Of T).CopyTo
-        For i As Integer = 0 To m_Datatable.Rows.Count - 1
-
+        For i As Integer = 0 To m_List.Count - 1
+            array(i + arrayIndex) = Item(i)
         Next
     End Sub
 
-    Private Function Contains(item As T) As Boolean Implements ICollection(Of T).Contains
-        Throw New NotImplementedException()
+    Function Contains(item As T) As Boolean Implements ICollection(Of T).Contains
+        Dim i As Integer = m_Datatable.Rows.IndexOf(item.Row)
+        Return i <> -1
     End Function
 
-    Private Function Remove(item As T) As Boolean Implements ICollection(Of T).Remove
-        Throw New NotImplementedException()
+    Function Remove(item As T) As Boolean Implements ICollection(Of T).Remove
+        Dim i As Integer = m_Datatable.Rows.IndexOf(item.Row)
+        If i = -1 Then
+            Return False
+        Else
+            RemoveAt(i)
+            Return True
+        End If
     End Function
 
     Private Sub CopyTo(array As Array, index As Integer) Implements ICollection.CopyTo
-        Throw New NotImplementedException()
+        For i As Integer = 0 To m_List.Count - 1
+            array.SetValue(Item(i), i + index)
+        Next
     End Sub
 #End Region
 

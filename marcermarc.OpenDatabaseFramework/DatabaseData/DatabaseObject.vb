@@ -15,7 +15,7 @@ Public Class DatabaseObject
 
     Public Overrides Function Equals(obj As Object) As Boolean
         If obj.GetType Is Me.GetType Then
-            Dim databaseObject As DatabaseObject = obj
+            Dim databaseObject As DatabaseObject = CType(obj, DatabaseObject)
             Return m_Row.Equals(databaseObject.Row)
         End If
         Return False

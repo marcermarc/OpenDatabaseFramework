@@ -1,6 +1,8 @@
 ﻿Imports System
 Imports System.Data
 
+'Comments comming soon
+
 Public MustInherit Class Connection
     Implements IDisposable
 
@@ -12,22 +14,32 @@ Public MustInherit Class Connection
 
     Private m_DefaultTransaction As IUnique(Of Transaction)
 
-    Protected Sub New(in_ThreadUniqueTransactions As Boolean, in_ThreadUniqueCommands As Boolean)
-        If in_ThreadUniqueTransactions Then
+    Private ReadOnly m_ThreadUniqueCommands As Boolean
+
+    Protected Sub New(threadUniqueTransactions As Boolean, threadUniqueCommands As Boolean)
+        If threadUniqueTransactions Then
             m_DefaultTransaction = New ThreadUnique(Of Transaction)
         Else
             m_DefaultTransaction = New Unique(Of Transaction)
         End If
+        m_ThreadUniqueCommands = threadUniqueCommands
     End Sub
 
+#Region "Public"
+    Public Function ExecuteOne(in_Statement As SqlStatement) As DataTable
+        Throw New NotImplementedException
+    End Function
 
+    Public Function ExecuteOneInDefaultTransaction(in_Statement As SqlStatement) As DataTable
+        Throw New NotImplementedException
+    End Function
+#End Region
 
 #Region "MustOverride"
     Protected MustOverride Sub InitConnection()
     Protected MustOverride Function NewTransaction() As Transaction
     Protected MustOverride Function NewCommand() As Command
 #End Region
-
 
 #Region "IDisposable Support"
     Private disposedValue As Boolean ' Dient zur Erkennung redundanter Aufrufe.
