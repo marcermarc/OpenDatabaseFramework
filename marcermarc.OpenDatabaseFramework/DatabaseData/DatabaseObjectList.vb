@@ -10,6 +10,7 @@ Public Class DatabaseObjectList(Of T As {DatabaseObject, New})
 
     Private m_Datatable As DataTable
     Private m_List As List(Of T)
+    Private m_version As Integer
 
     Sub New(in_Datatable As DataTable)
         m_Datatable = in_Datatable
@@ -48,7 +49,7 @@ Public Class DatabaseObjectList(Of T As {DatabaseObject, New})
         m_List.Insert(index, item)
     End Sub
 
-    Sub RemoveAt(index As Integer) Implements IList(Of T).RemoveAt
+    Sub RemoveAt(index As Integer) Implements IList(Of T).RemoveAt, IList.RemoveAt
         m_Datatable.Rows.RemoveAt(index)
         m_List.RemoveAt(index)
     End Sub
@@ -59,13 +60,13 @@ Public Class DatabaseObjectList(Of T As {DatabaseObject, New})
 #End Region
 
 #Region "ICollection(Of T)"
-    ReadOnly Property Count As Integer Implements ICollection(Of T).Count
+    ReadOnly Property Count As Integer Implements ICollection(Of T).Count, ICollection.Count
         Get
             Return m_List.Count
         End Get
     End Property
 
-    Private ReadOnly Property IsReadOnly As Boolean Implements ICollection(Of T).IsReadOnly
+    Private ReadOnly Property IsReadOnly As Boolean Implements ICollection(Of T).IsReadOnly, IList.IsReadOnly
         Get
             Return False
         End Get
@@ -76,7 +77,7 @@ Public Class DatabaseObjectList(Of T As {DatabaseObject, New})
         m_List.Add(item)
     End Sub
 
-    Private Sub Clear() Implements ICollection(Of T).Clear
+    Private Sub Clear() Implements ICollection(Of T).Clear, IList.Clear
         'Private because it is not usefull
         m_Datatable.Rows.Clear()
         m_List.Clear()
@@ -112,115 +113,157 @@ Public Class DatabaseObjectList(Of T As {DatabaseObject, New})
 
 #Region "IEnumerable(Of T)"
     Private Function GetEnumerator() As IEnumerator(Of T) Implements IEnumerable(Of T).GetEnumerator
-        Throw New NotImplementedException()
+        Throw New NotImplementedException() 'ToDO
     End Function
 #End Region
 
 #Region "IList"
     Private Property IList_Item(index As Integer) As Object Implements IList.Item
         Get
-            Throw New NotImplementedException()
+            Return Item(index)
         End Get
         Set(value As Object)
-            Throw New NotImplementedException()
+            Item(index) = CType(value, T)
         End Set
     End Property
 
-    Private ReadOnly Property IList_IsReadOnly As Boolean Implements IList.IsReadOnly
+    'IList.IsReadOnly -> ICollection(Of T).IsReadOnly
+
+    Private ReadOnly Property IList_IsFixedSize As Boolean Implements IList.IsFixedSize
         Get
-            Throw New NotImplementedException()
+            Return False
         End Get
     End Property
 
-    Private ReadOnly Property IsFixedSize As Boolean Implements IList.IsFixedSize
-        Get
-            Throw New NotImplementedException()
-        End Get
-    End Property
-
-    Private Function Add(value As Object) As Integer Implements IList.Add
-        Throw New NotImplementedException()
+    Private Function IList_Add(value As Object) As Integer Implements IList.Add
+        Add(CType(value, T))
+        Return m_List.Count - 1
     End Function
 
-    Private Function Contains(value As Object) As Boolean Implements IList.Contains
-        Throw New NotImplementedException()
+    Private Function IList_Contains(value As Object) As Boolean Implements IList.Contains
+        Return Contains(CType(value, T))
     End Function
 
-    Private Sub IList_Clear() Implements IList.Clear
-        Throw New NotImplementedException()
-    End Sub
+    'IList.Clear -> ICollection(Of T).Clear
 
-    Private Function IndexOf(value As Object) As Integer Implements IList.IndexOf
-        Throw New NotImplementedException()
+    Private Function IList_IndexOf(value As Object) As Integer Implements IList.IndexOf
+        Return IndexOf(CType(value, T))
     End Function
 
-    Private Sub Insert(index As Integer, value As Object) Implements IList.Insert
-        Throw New NotImplementedException()
+    Private Sub IList_Insert(index As Integer, value As Object) Implements IList.Insert
+        Insert(index, CType(value, T))
     End Sub
 
-    Private Sub Remove(value As Object) Implements IList.Remove
-        Throw New NotImplementedException()
+    Private Sub IList_Remove(value As Object) Implements IList.Remove
+        Remove(CType(value, T))
     End Sub
 
-    Private Sub IList_RemoveAt(index As Integer) Implements IList.RemoveAt
-        Throw New NotImplementedException()
-    End Sub
+    'IList.RemoveAt -> IList(Of T).RemoveAt
 #End Region
 
 #Region "ICollection"
-    Private ReadOnly Property ICollection_Count As Integer Implements ICollection.Count
-        Get
-            Throw New NotImplementedException()
-        End Get
-    End Property
+    'ICollection.Count
 
     Private ReadOnly Property SyncRoot As Object Implements ICollection.SyncRoot
         Get
-            Throw New NotImplementedException()
+            Dim icol As ICollection = m_List
+            Return icol.SyncRoot
         End Get
     End Property
 
     Private ReadOnly Property IsSynchronized As Boolean Implements ICollection.IsSynchronized
         Get
-            Throw New NotImplementedException()
+            Return False
         End Get
     End Property
 #End Region
 
 #Region "IEnumerable"
     Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
-        Throw New NotImplementedException()
+        Throw New NotImplementedException() 'ToDo
     End Function
 #End Region
 
+#Region "Enumerator"
+    Public Structure Enumerator
+        Implements IEnumerator(Of T), IEnumerator
+
+        Private m_liste As DatabaseObjectList(Of T)
+        Private m_index As Integer
+        Private m_version As Integer
+
+        Friend Sub New(in_liste As DatabaseObjectList(Of T))
+            m_liste = in_liste
+            m_index = 0
+            m_version = in_liste.m_version
+        End Sub
+
+        Public ReadOnly Property Current As T Implements IEnumerator(Of T).Current
+            Get
+                If m_version <> m_liste.m_version Then
+                    Throw New Exceptions.InvalidOperationException("List has been changed.")
+                ElseIf m_index = -1 Then
+                    Throw New Exceptions.InvalidOperationException("Enumerator is at the end.")
+                End If
+                Return m_liste(m_index)
+            End Get
+        End Property
+
+        Private ReadOnly Property IEnumerator_Current As Object Implements IEnumerator.Current
+            Get
+                Return Current
+            End Get
+        End Property
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            m_liste = Nothing
+        End Sub
+
+        Public Sub Reset() Implements IEnumerator.Reset
+            If m_version <> m_liste.m_version Then
+                Throw New Exceptions.InvalidOperationException("List has been changed.")
+            End If
+            m_index = 0
+        End Sub
+
+        Public Function MoveNext() As Boolean Implements IEnumerator.MoveNext
+            If m_version <> m_liste.m_version Then
+                Throw New Exceptions.InvalidOperationException("List has been changed.")
+            ElseIf m_index >= m_liste.Count - 1 Then
+                m_index = -1
+                Return False
+            End If
+            m_index += 1
+            Return True
+        End Function
+    End Structure
+#End Region
+
 #Region "IDisposable Support"
-    Private disposedValue As Boolean ' Dient zur Erkennung redundanter Aufrufe.
+    Private disposedValue As Boolean
 
     ' IDisposable
     Protected Overridable Sub Dispose(disposing As Boolean)
         If Not disposedValue Then
             If disposing Then
-                ' TODO: verwalteten Zustand (verwaltete Objekte) entsorgen.
+                ' TODO
             End If
 
-            ' TODO: nicht verwaltete Ressourcen (nicht verwaltete Objekte) freigeben und Finalize() weiter unten überschreiben.
-            ' TODO: große Felder auf Null setzen.
+            ' TODO
+            ' TODO
         End If
         disposedValue = True
     End Sub
 
-    ' TODO: Finalize() nur überschreiben, wenn Dispose(disposing As Boolean) weiter oben Code zur Bereinigung nicht verwalteter Ressourcen enthält.
+    ' TODO
     'Protected Overrides Sub Finalize()
-    '    ' Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in Dispose(disposing As Boolean) weiter oben ein.
     '    Dispose(False)
     '    MyBase.Finalize()
     'End Sub
 
-    ' Dieser Code wird von Visual Basic hinzugefügt, um das Dispose-Muster richtig zu implementieren.
     Public Sub Dispose() Implements IDisposable.Dispose
-        ' Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in Dispose(disposing As Boolean) weiter oben ein.
         Dispose(True)
-        ' TODO: Auskommentierung der folgenden Zeile aufheben, wenn Finalize() oben überschrieben wird.
+        ' TODO
         ' GC.SuppressFinalize(Me)
     End Sub
 #End Region

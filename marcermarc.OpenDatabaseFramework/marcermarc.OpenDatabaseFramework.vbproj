@@ -61,6 +61,7 @@
     <Compile Include="Connection\Connection.vb" />
     <Compile Include="Connection\Transaction.vb" />
     <Compile Include="DatabaseData\DatabaseObject.vb" />
+    <Compile Include="Exceptions\InvalidOperationException.vb" />
     <Compile Include="Exceptions\NotFoundException.vb" />
     <Compile Include="Exceptions\NotSupportedException.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

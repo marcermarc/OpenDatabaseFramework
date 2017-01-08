@@ -3,7 +3,7 @@ Imports System.Data
 
 'Comments comming soon
 
-Public MustInherit Class Transaction
+Public MustInherit Class Transactionhttps : //www.youtube.com/watch?v=JXT7sYj2ugU
     Implements IDisposable
 
     Private m_lock As Object 'For Synclock
