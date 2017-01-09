@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Collections.Generic
 Imports System.Data
 
 'Comments comming soon
@@ -26,12 +27,30 @@ Public MustInherit Class Connection
     End Sub
 
 #Region "Public"
-    Public Function ExecuteOne(in_Statement As SqlStatement) As DataTable
-        Throw New NotImplementedException
+    ReadOnly Property DefaultTransaction As Transaction
+        Get
+            If m_DefaultTransaction.Value Is Nothing Then
+                m_DefaultTransaction.Value = NewTransaction()
+            End If
+
+            Return m_DefaultTransaction.Value
+        End Get
+    End Property
+
+    Function Execute(statement As SqlStatement) As DataTable
+        Return DefaultTransaction.Execute(statement)
     End Function
 
-    Public Function ExecuteOneInDefaultTransaction(in_Statement As SqlStatement) As DataTable
-        Throw New NotImplementedException
+    Function Execute(statements As IList(Of SqlStatement)) As DataSet
+        Return m_DefaultTransaction.Value.Execute(statements)
+    End Function
+
+    Function ExecuteWithoutResult(statement As SqlStatement) As Integer
+        Return DefaultTransaction.ExecuteWithoutResult(statement)
+    End Function
+
+    Function ExecuteWithoutResult(statements As IList(Of SqlStatement)) As Integer
+        Return m_DefaultTransaction.Value.ExecuteWithoutResult(statements)
     End Function
 #End Region
 
