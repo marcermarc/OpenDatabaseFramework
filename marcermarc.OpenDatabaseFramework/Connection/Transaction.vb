@@ -12,12 +12,18 @@ Public MustInherit Class Transaction
     Protected Friend m_Transaction As IDbTransaction
 
 #Region "Public"
+    ''' <summary>
+    ''' Executes the statement in this transaction
+    ''' </summary>
     Function Execute(statement As SqlStatement) As DataTable
         Using command As Command = NewCommand()
             Return command.Execute(statement)
         End Using
     End Function
 
+    ''' <summary>
+    ''' Executes the statements in this transaction
+    ''' </summary>
     Function Execute(statements As IList(Of SqlStatement)) As DataSet
         Dim result As New DataSet
         Dim done As Integer = 0
@@ -49,12 +55,18 @@ Public MustInherit Class Transaction
         Return result
     End Function
 
+    ''' <summary>
+    ''' Executes the statement in this transaction
+    ''' </summary>
     Function ExecuteWithoutResult(statement As SqlStatement) As Integer
         Using command As Command = NewCommand()
             Return command.ExecuteWithoutResult(statement)
         End Using
     End Function
 
+    ''' <summary>
+    ''' Executes the statements in this transaction
+    ''' </summary>
     Function ExecuteWithoutResult(statements As IList(Of SqlStatement)) As Integer
         Dim result As Integer
         Dim done As Integer

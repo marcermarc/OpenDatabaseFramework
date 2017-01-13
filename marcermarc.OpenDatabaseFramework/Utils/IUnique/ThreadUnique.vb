@@ -36,7 +36,11 @@ Friend Class ThreadUnique(Of T)
     Protected Overridable Sub Dispose(disposing As Boolean)
         If Not disposedValue Then
             If disposing Then
-
+                If GetType(T).IsAssignableFrom(GetType(IDisposable)) Then
+                    For Each v As T In m_values.Values
+                        CType(v, IDisposable).Dispose()
+                    Next
+                End If
             End If
 
             m_values = Nothing

@@ -22,6 +22,9 @@ Public MustInherit Class Command
     End Property
 
 #Region "Public"
+    ''' <summary>
+    ''' Executes the statement
+    ''' </summary>
     Public Function Execute(statement As SqlStatement) As DataTable
         Using ds As New DataSet  'ToDo Test, maybe tables are disposed too.
             Execute({statement}, ds)
@@ -30,6 +33,9 @@ Public MustInherit Class Command
         End Using
     End Function
 
+    ''' <summary>
+    ''' Executes the statement
+    ''' </summary>
     Public Function ExecuteWithoutResult(statement As SqlStatement) As Integer
         Dim result As Integer
         ExecuteWithoutResult({statement}, result)

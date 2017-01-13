@@ -6,6 +6,7 @@ Public Class SqlStatement
     Private m_Statement As String
     Private m_Items As Dictionary(Of String, Object)
 
+    ''' <param name="in_Statement">The sql-string</param>
     Sub New(in_Statement As String)
         m_Statement = in_Statement
         m_Items = New Dictionary(Of String, Object)
@@ -16,6 +17,10 @@ Public Class SqlStatement
         m_Items = New Dictionary(Of String, Object)
     End Sub
 
+    ''' <summary>
+    ''' The sql-string of the statement
+    ''' </summary>
+    ''' <returns></returns>
     Public Property Statement() As String
         Get
             Return m_Statement
